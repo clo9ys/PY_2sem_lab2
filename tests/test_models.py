@@ -17,7 +17,7 @@ def test_priority_validation_error(task, wrong_priority):
         task.priority = wrong_priority
 
 def test_short_title(task):
-    with pytest.raises(ValidationError, match="Слишком короткое название задачи"):
+    with pytest.raises(ValidationError, match="Слишком короткое описание задачи"):
         task.title = "123"
 
 def test_set_status_wrong_status_error(task):

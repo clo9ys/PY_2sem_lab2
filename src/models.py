@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Type, Union
 from enum import Enum
 from src.logger import make_logger
 from datetime import datetime
@@ -20,15 +20,15 @@ class TaskStatus(Enum):
 
 class PriorityDescriptor:
     """Data дескриптор для валидации приоритета"""
-    def __set_name__(self, owner, name: str) -> None:
+    def __set_name__(self, owner: Type[Any], name: str) -> None:
         self.public_name = name
         self.private_name = '_' + name
 
-    def __get__(self, instance, owner) -> Any:
+    def __get__(self, instance: Any | None, owner: Type[Any]) -> Union[str, 'PriorityDescriptor']:
         if instance is None: return self
         return getattr(instance, self.private_name)
 
-    def __set__(self, instance, value) -> None:
+    def __set__(self, instance: Any, value: Any) -> None:
         if not isinstance(value, int) or not (1 <= value <= 10):
             logger.error("Недопустимое значение нового приоритета")
             raise ValidationError("Приоритет должен быть целым числом от 1 до 10")
@@ -38,7 +38,7 @@ class PriorityDescriptor:
 
 class TaskLink:
     """Non-data дескриптор для генерации ссылки на задачу"""
-    def __get__(self, instance, owner) -> Any:
+    def __get__(self, instance: Any | None, owner: Type[Any]) -> Union[str, 'TaskLink']:
         if instance is None:
             return self
         return f"http://some_link/for-task/{instance.id}"
@@ -61,13 +61,13 @@ class Task:
         return self._title
 
     @title.setter
-    def title(self, name) -> None:
+    def title(self, value: str) -> None:
         """Метод смены названия задачи"""
-        if not name or len(name) < 4:
-            logger.error(f"Слишком короткое название задачи: {name}")
-            raise ValidationError("Слишком короткое название задачи")
+        if not value or len(value) < 4:
+            logger.error(f"Слишком короткое описание задачи: {value}")
+            raise ValidationError("Слишком короткое описание задачи")
 
-        self._title = name
+        self._title = value
 
     @property
     def status(self) -> TaskStatus:

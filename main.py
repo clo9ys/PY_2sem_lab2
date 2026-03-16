@@ -1,4 +1,5 @@
 import json
+from typing import Any
 from src import FileTaskSource, GenerationTaskSource, ApiTaskSource
 from src.models import ValidationError
 from src.protocol import TaskSource
@@ -6,7 +7,7 @@ from src.logger import make_logger
 
 logger = make_logger()
 
-def process_task(source) -> None:
+def process_task(source: Any) -> None:
     """Проверяет источник, получает задачи и печатает их. Если источник не подходит, выбрасывает ошибку"""
     if not isinstance(source, TaskSource):
         raise TypeError(f"Объект не реализует единый контракт - отсутствует метод get_tasks()")
